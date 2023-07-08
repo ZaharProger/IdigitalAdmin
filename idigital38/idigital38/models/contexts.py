@@ -6,7 +6,7 @@ class DbContext:
         self.__connect(db_user, db_password, db_host, db_name, driver)
 
     def __connect(self, db_user, db_password, db_host, db_name, driver):
-        self.__engine = create_engine(f'{driver}://{db_user}:{db_password}@{db_host}/{db_name}')
+        self.engine = create_engine(f'{driver}://{db_user}:{db_password}@{db_host}/{db_name}')
 
 
 class PyMySqlContext(DbContext):
