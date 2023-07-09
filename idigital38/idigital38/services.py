@@ -7,11 +7,13 @@ from .models.contexts import DbContext
 from .models.db_entities import Event
 
 
-class BaseService:
-    pass
+"""
+    Сервисы нужны для выполнения некоторой бизнес-логики
+    Не отличаются от обычных классов
+"""
 
 
-class ImageService(BaseService):
+class ImageService:
     def read_image(self, path):
         with open(path, 'rb') as image:
             return bytearray(image.read())
@@ -21,7 +23,7 @@ class ImageService(BaseService):
         image.save(path)
 
 
-class EventService(BaseService):
+class EventService:
     def get_all_events(self, db_context: DbContext):
         with Session(db_context.engine) as session:
             statement = select(Event)
