@@ -1,11 +1,13 @@
+from dataclasses import asdict
+
 from rest_framework import permissions, authentication, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .models.contexts import DbContext
-from .models.serializers import EventSerializer
-from .services import EventService
-
+from .models.http import DataResponse
+from .serializers import EventSerializer
+from .services import EventService, ImageService
 
 """
 Так выглядит контроллер в Django REST Framework
@@ -16,7 +18,7 @@ from .services import EventService
 данного компонента API (с помощью модуля permissions)
 Аналогично с аутентификацией
 
-db_context и service - классовые поля, которые можно напрямую задать из urls.py, тем самым
+Есть классовые поля, которые можно напрямую задать из urls.py, тем самым
 сделав своего рода Dependency Injection
 
 Методы в контроллере называются аналогично HTTP методам (get, post, put) и так далее
@@ -29,14 +31,21 @@ class EventController(APIView):
     authentication_classes = []
 
     db_context: DbContext = None
-    service: EventService = None
+    event_service: EventService = None
+    image_service: ImageService = None
+    event_serializer: EventSerializer = None
 
     def get(self, request):
-        events = self.service.get_all_events(self.db_context)
-        # Параметр many указывает на сериализацию коллекции
-        serialized_events = EventSerializer(events, many=True)
+        events = self.event_service.get_all_events(self.db_context)
+        serialized_events = [self.event_serializer.serialize(event) for event in events]
 
         return Response(
-            serialized_events.data,
-            status=status.HTTP_200_OK
+            asdict(
+                DataResponse(
+                    data=serialized_events,
+                    message='Не найдено ни одного мероприятия' if len(serialized_events) == 0 else ''
+                )
+            ),
+            status=status.HTTP_200_OK,
+            content_type='application/json'
         )

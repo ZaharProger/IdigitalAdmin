@@ -22,7 +22,8 @@ from django.urls import path
 
 from ..controllers import EventController
 from ..models.contexts import PyMySqlContext
-from ..services import EventService
+from ..serializers import EventSerializer
+from ..services import EventService, ImageService
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -33,7 +34,14 @@ db_context = PyMySqlContext(
     db_host=os.environ['DB_HOST']
 )
 
+image_service = ImageService()
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('events/', EventController.as_view(db_context=db_context, service=EventService()))
+    path('api/events/', EventController.as_view(
+        db_context=db_context,
+        event_service=EventService(),
+        image_service=image_service,
+        event_serializer=EventSerializer(image_service=image_service)
+    ))
 ]

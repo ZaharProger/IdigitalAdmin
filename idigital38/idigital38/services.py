@@ -16,7 +16,7 @@ from .models.db_entities import Event
 class ImageService:
     def read_image(self, path):
         with open(path, 'rb') as image:
-            return bytearray(image.read())
+            return image.read()
 
     def write_image(self, image_bytes, path):
         image = Image.open(io.BytesIO(image_bytes))

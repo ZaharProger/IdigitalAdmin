@@ -1,7 +1,10 @@
+from dataclasses import dataclass
+
 from sqlalchemy import String, BigInteger
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
+@dataclass
 class Base(DeclarativeBase):
     id: Mapped[int] = mapped_column(
         BigInteger(),
@@ -10,6 +13,7 @@ class Base(DeclarativeBase):
     )
 
 
+@dataclass
 class Event(Base):
     __tablename__ = 'events'
 
