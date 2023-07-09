@@ -14,9 +14,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
+
+import dotenv
 from django.contrib import admin
 from django.urls import path
 
+from ..controllers import EventController
+from ..models.contexts import PyMySqlContext
+from ..services import EventService
+
+dotenv.load_dotenv(dotenv.find_dotenv())
+
+db_context = PyMySqlContext(
+    db_name=os.environ['DB_NAME'],
+    db_user=os.environ['DB_USER'],
+    db_password=os.environ['DB_PASSWORD'],
+    db_host=os.environ['DB_HOST']
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('events/', EventController.as_view(db_context=db_context, service=EventService()))
 ]
