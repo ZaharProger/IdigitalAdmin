@@ -8,4 +8,4 @@ class BaseResponse:
 
 @dataclass
 class DataResponse(BaseResponse):
-    data: list
+    data: list | dict

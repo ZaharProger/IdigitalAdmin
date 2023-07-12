@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .models.contexts import DbContext
-from .models.http import DataResponse
+from .models.http import DataResponse, BaseResponse
 from .serializers import EventSerializer
 from .services import EventService, ImageService
 
@@ -36,16 +36,48 @@ class EventController(APIView):
     event_serializer: EventSerializer = None
 
     def get(self, request):
-        events = self.event_service.get_all_events(self.db_context)
-        serialized_events = [self.event_serializer.serialize(event) for event in events]
+        event_id = request.GET.get('id', None)
+
+        if event_id is None:
+            events = self.event_service.get_all_events(self.db_context)
+            serialized_events = [self.event_serializer.serialize(event) for event in events]
+
+            response = DataResponse(
+                data=serialized_events,
+                message='Не найдено ни одного мероприятия' if len(serialized_events) == 0 else ''
+            )
+        else:
+            event = self.event_service.get_event_by_id(self.db_context, event_id)
+            if event is not None:
+                serialized_event = self.event_serializer.serialize(event)
+                response = DataResponse(
+                    data=serialized_event,
+                    message=''
+                )
+            else:
+                response = BaseResponse(
+                    message='Мероприятие не найдено'
+                )
+
+        return Response(
+            asdict(response),
+            status=status.HTTP_200_OK,
+            content_type='application/json'
+        )
+
+    def delete(self, request):
+        ids = [item_id.strip() for item_id in request.GET.get('ids', '0').split(',')]
+        is_valid = all(item_id.isnumeric() for item_id in ids)
+
+        if is_valid:
+            self.event_service.remove_events_by_ids(self.db_context, ids)
 
         return Response(
             asdict(
-                DataResponse(
-                    data=serialized_events,
-                    message='Не найдено ни одного мероприятия' if len(serialized_events) == 0 else ''
+                BaseResponse(
+                    message='Идентификаторы должны быть целыми числами' if not is_valid else ''
                 )
             ),
-            status=status.HTTP_200_OK,
+            status=status.HTTP_200_OK if is_valid else status.HTTP_400_BAD_REQUEST,
             content_type='application/json'
         )
