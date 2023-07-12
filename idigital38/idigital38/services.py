@@ -1,4 +1,6 @@
 import io
+import os
+
 import PIL.Image as Image
 from sqlalchemy import select, delete, insert, update
 from sqlalchemy.orm import Session
@@ -23,6 +25,15 @@ class ImageService:
     def write_image(self, image_bytes, path):
         image = Image.open(io.BytesIO(image_bytes))
         image.save(path)
+
+    def remove_image(self, path):
+        os.remove(path)
+
+    def remove_unused_images(self, paths, directory):
+        for file_name in os.listdir(directory):
+            usages = len(list(filter(lambda path: file_name in path, paths)))
+            if usages == 0:
+                self.remove_image('{0}/{1}'.format(directory, file_name))
 
 
 class EventService:

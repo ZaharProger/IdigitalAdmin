@@ -42,6 +42,6 @@ urlpatterns = [
         db_context=db_context,
         event_service=EventService(),
         image_service=image_service,
-        event_serializer=EventSerializer(image_service=image_service)
+        event_serializer=EventSerializer()
     ))
 ]

@@ -38,26 +38,29 @@ class EventController(APIView):
     def get(self, request):
         event_id = request.GET.get('id', None)
 
-        if event_id is None:
-            events = self.event_service.get_all_events(self.db_context)
-            serialized_events = [self.event_serializer.serialize(event) for event in events]
+        events = self.event_service.get_all_events(self.db_context) if event_id is None else \
+            [self.event_service.get_event_by_id(self.db_context, event_id)]
+        serialized_events = []
 
+        for event in events:
+            if event is not None:
+                additional_params = None if event.image_uri is None else \
+                    {'image': self.image_service.read_image(event.image_uri)}
+                serialized_event = self.event_serializer.serialize(
+                    event,
+                    additional_params=additional_params
+                )
+                serialized_events.append(serialized_event)
+
+        if event_id is None or len(serialized_events) != 0:
             response = DataResponse(
                 data=serialized_events,
                 message='Не найдено ни одного мероприятия' if len(serialized_events) == 0 else ''
             )
         else:
-            event = self.event_service.get_event_by_id(self.db_context, event_id)
-            if event is not None:
-                serialized_event = self.event_serializer.serialize(event)
-                response = DataResponse(
-                    data=serialized_event,
-                    message=''
-                )
-            else:
-                response = BaseResponse(
-                    message='Мероприятие не найдено'
-                )
+            response = BaseResponse(
+                message='Мероприятие не найдено'
+            )
 
         return Response(
             asdict(response),
@@ -72,6 +75,12 @@ class EventController(APIView):
         if is_valid:
             self.event_service.remove_events_by_ids(self.db_context, ids)
 
+            directory = 'idigital38/idigital38/media/pics'
+            events = list(filter(lambda event_item: event_item.image_uri is not None,
+                                 self.event_service.get_all_events(self.db_context)))
+            image_uris = [event.image_uri for event in events]
+            self.image_service.remove_unused_images(image_uris, directory)
+
         return Response(
             asdict(
                 BaseResponse(
@@ -79,5 +88,53 @@ class EventController(APIView):
                 )
             ),
             status=status.HTTP_200_OK if is_valid else status.HTTP_400_BAD_REQUEST,
+            content_type='application/json'
+        )
+
+    def post(self, request):
+        if 'image' in request.FILES.keys():
+            directory = 'idigital38/idigital38/media/pics'
+
+            image_uri = '{0}/{1}'.format(directory, request.FILES['image'])
+            self.image_service.write_image(request.FILES['image'].file.read(), image_uri)
+            request.data['image_uri'] = image_uri
+
+        event = self.event_serializer.deserialize(request.data)
+        self.event_service.add_event(self.db_context, event)
+
+        return Response(
+            asdict(
+                BaseResponse(
+                    message=''
+                )
+            ),
+            status=status.HTTP_200_OK,
+            content_type='application/json'
+        )
+
+    def put(self, request):
+        directory = 'idigital38/idigital38/media/pics'
+
+        if 'image' in request.FILES.keys():
+            image_uri = '{0}/{1}'.format(directory, request.FILES['image'])
+            self.image_service.write_image(request.FILES['image'].file.read(), image_uri)
+            request.data['image_uri'] = image_uri
+
+        event = self.event_serializer.deserialize(request.data)
+        self.event_service.edit_event(self.db_context, event)
+
+        events = list(filter(lambda event_item: event_item.image_uri is not None,
+                             self.event_service.get_all_events(self.db_context)))
+
+        image_uris = [event.image_uri for event in events]
+        self.image_service.remove_unused_images(image_uris, directory)
+
+        return Response(
+            asdict(
+                BaseResponse(
+                    message=''
+                )
+            ),
+            status=status.HTTP_200_OK,
             content_type='application/json'
         )
