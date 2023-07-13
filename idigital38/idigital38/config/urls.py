@@ -20,10 +20,10 @@ import dotenv
 from django.contrib import admin
 from django.urls import path
 
-from ..controllers import EventController
+from ..controllers import EventController, OrganizerController
 from ..models.contexts import PyMySqlContext
-from ..serializers import EventSerializer
-from ..services import EventService, ImageService
+from ..serializers import EventSerializer, OrganizerSerializer
+from ..services import EventService, ImageService, OrganizerService
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -43,5 +43,11 @@ urlpatterns = [
         event_service=EventService(),
         image_service=image_service,
         event_serializer=EventSerializer()
+    )),
+    path('api/organizers/', OrganizerController.as_view(
+        db_context=db_context,
+        image_service=image_service,
+        organizer_service=OrganizerService(),
+        organizer_serializer=OrganizerSerializer()
     ))
 ]
