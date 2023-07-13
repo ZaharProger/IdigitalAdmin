@@ -19,9 +19,15 @@ class EventSerializer(BaseSerializer):
     def serialize(self, entity, additional_params=None):
         event_dict = asdict(entity)
         event_dict.pop('image_uri')
-        if entity.image_uri is not None and additional_params is not None:
-            image_bytes = additional_params['image'] if 'image' in additional_params.keys() else None
-            event_dict['image'] = str(base64.b64encode(image_bytes)) if image_bytes is not None else None
+        if entity.image_uri is not None:
+            if additional_params is not None and 'image' in additional_params.keys():
+                image_bytes = additional_params['image']
+            else:
+                image_bytes = None
+        else:
+            image_bytes = None
+
+        event_dict['image'] = str(base64.b64encode(image_bytes)) if image_bytes is not None else None
 
         return event_dict
 
@@ -42,9 +48,15 @@ class OrganizerSerializer(BaseSerializer):
     def serialize(self, entity, additional_params=None):
         organizer_dict = asdict(entity)
         organizer_dict.pop('image_uri')
-        if entity.image_uri is not None and additional_params is not None:
-            image_bytes = additional_params['image'] if 'image' in additional_params.keys() else None
-            organizer_dict['image'] = str(base64.b64encode(image_bytes)) if image_bytes is not None else None
+        if entity.image_uri is not None:
+            if additional_params is not None and 'image' in additional_params.keys():
+                image_bytes = additional_params['image']
+            else:
+                image_bytes = None
+        else:
+            image_bytes = None
+
+        organizer_dict['image'] = str(base64.b64encode(image_bytes)) if image_bytes is not None else None
 
         return organizer_dict
 
