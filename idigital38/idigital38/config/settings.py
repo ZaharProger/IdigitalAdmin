@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'django_extensions',
-    'corsheaders'
+    'corsheaders',
+    'idigital38'
 ]
 
 MIDDLEWARE = [
@@ -134,9 +135,20 @@ REST_FRAMEWORK = {
 }
 
 STATIC_URL = 'static/'
-STATIC_ROOT = 'static/'
+if DEBUG:
+    STATIC_ROOT = ''
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, "static"),
+]
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
   'http://localhost:3000',
 )
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

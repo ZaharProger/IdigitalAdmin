@@ -1,5 +1,7 @@
 venv
 .env
 .idea
-idigital38/idigital38/media/pics/*
+idigital38/idigital38/static/*
+idigital38/idigital38/media/*
 *.pem
+__pycache__

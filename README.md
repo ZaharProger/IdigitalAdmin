@@ -22,3 +22,8 @@
 
 На этом все. Можно запускать сервер командой из пункта 5 раздела выше, однако все сработает при условии, что установлены все зависимости из requirements.txt
 Если что-то не получилось по SSL, можно проделать все напрямую по шагам на сайте https://timonweb.com/django/https-django-development-server-ssl-certificate/
+
+Я перевел проект на Django ORM, в отличие от SQLAlchemy эта ORM не умеет сама мигрировать изменения в БД. \
+Для миграции нужно:
+1. Ввести команду **python .\idigital38\manage.py makemigrations**
+2. Затем ввести **python .\idigital38\manage.py migrate**
