@@ -20,16 +20,17 @@ class EventView(APIView):
             is_single = True
             try:
                 events_data = Event.objects.get(pk=event_id)
-            except Event.DoesNotExist:
+            except (Event.DoesNotExist, ValueError):
                 events_data = None
+
+        is_not_found = (is_single and events_data is None) or (not is_single and len(events_data) == 0)
 
         return Response(
             {
                 'data': EventSerializer(events_data, many=not is_single).data,
-                'message': 'Не найдено ни одного мероприятия' if
-                events_data is None or (events_data is not None and len(events_data) == 0) else ''
+                'message': 'Не найдено ни одного мероприятия' if is_not_found else ''
             },
-            status=status.HTTP_200_OK,
+            status=status.HTTP_200_OK if not is_not_found else status.HTTP_404_NOT_FOUND,
             content_type='application/json'
         )
 
@@ -68,13 +69,16 @@ class EventView(APIView):
             if serialized_data.is_valid():
                 serialized_data.save()
                 response_status = status.HTTP_200_OK
+                message = ''
             else:
                 response_status = status.HTTP_400_BAD_REQUEST
-        except Event.DoesNotExist:
-            response_status = status.HTTP_400_BAD_REQUEST
+                message = 'Форма содержит недопустимые данные'
+        except (Event.DoesNotExist, ValueError):
+            response_status = status.HTTP_404_NOT_FOUND
+            message = 'Не найдено мероприятия по заданному идентификатору'
 
         return Response(
-            {'message': ''},
+            {'message': message},
             status=response_status,
             content_type='application/json'
         )
