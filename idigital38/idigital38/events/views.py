@@ -15,19 +15,17 @@ class EventView(APIView):
         event_id = request.GET.get('id', None)
         if event_id is None:
             events_data = Event.objects.all()
-            is_single = False
         else:
-            is_single = True
             try:
-                events_data = Event.objects.get(pk=event_id)
+                events_data = [Event.objects.get(pk=event_id)]
             except (Event.DoesNotExist, ValueError):
-                events_data = None
+                events_data = []
 
-        is_not_found = (is_single and events_data is None) or (not is_single and len(events_data) == 0)
+        is_not_found = len(events_data) == 0
 
         return Response(
             {
-                'data': EventSerializer(events_data, many=not is_single).data,
+                'data': EventSerializer(events_data, many=True).data,
                 'message': 'Не найдено ни одного мероприятия' if is_not_found else ''
             },
             status=status.HTTP_200_OK if not is_not_found else status.HTTP_404_NOT_FOUND,

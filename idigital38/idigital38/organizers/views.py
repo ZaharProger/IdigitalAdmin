@@ -18,19 +18,17 @@ class OrganizerView(APIView):
         organizer_id = request.GET.get('id', None)
         if organizer_id is None:
             organizers_data = Organizer.objects.all()
-            is_single = False
         else:
-            is_single = True
             try:
-                organizers_data = Organizer.objects.get(pk=organizer_id)
+                organizers_data = [Organizer.objects.get(pk=organizer_id)]
             except (Organizer.DoesNotExist, ValueError):
-                organizers_data = None
+                organizers_data = []
 
-        is_not_found = (is_single and organizers_data is None) or (not is_single and len(organizers_data) == 0)
+        is_not_found = len(organizers_data) == 0
 
         return Response(
             {
-                'data': OrganizerSerializer(organizers_data, many=not is_single).data,
+                'data': OrganizerSerializer(organizers_data, many=True).data,
                 'message': 'Не найдено ни одного участника организационного комитета' if is_not_found else ''
             },
             status=status.HTTP_200_OK if not is_not_found else status.HTTP_404_NOT_FOUND,
