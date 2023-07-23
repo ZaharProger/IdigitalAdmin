@@ -30,3 +30,10 @@ class LoginView(APIView):
                 return response
             
         return Response({'message': 'Неверный логин или пароль!'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class LogoutView(APIView):
+    def get(self, request):
+        # Удаление токена из кук
+        response = HttpResponse('Вы вышли из системы.', status=200)
+        response.delete_cookie('access_token')
+        return response
