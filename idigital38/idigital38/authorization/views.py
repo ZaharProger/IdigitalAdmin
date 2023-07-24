@@ -24,7 +24,12 @@ class LoginView(APIView):
                 access_token = str(refresh.access_token)
                 response = HttpResponse('Успешный вход!',status=200)
                 # Установка токена в куки с флагом httponly=True
-                response.set_cookie(key='access_token', value=access_token, httponly=True)
+                response.set_cookie(
+                    key='access_token',
+                    value=access_token,
+                    httponly=True,
+                    secure=True
+                )
                 response
                 # Вернуть HTTP-ответ с кукой в заголовках
                 return response
