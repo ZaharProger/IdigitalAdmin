@@ -92,7 +92,7 @@ class OrganizerView(APIView):
     def patch(self, request):
         try:
             for organizer_id, organizer_order in request.data.items():
-                Organizer.objects.filter(id=int(organizer_id)).update(order=organizer_order)
+                Organizer.objects.filter(id=int(organizer_id)).update(order=int(organizer_order))
 
             is_success = True
         except ValueError:
