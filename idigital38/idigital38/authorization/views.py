@@ -1,11 +1,10 @@
-
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework import status
 from django.http import HttpResponse
+
 
 class LoginView(APIView):
     def post(self, request):
@@ -28,9 +27,9 @@ class LoginView(APIView):
                     key='access_token',
                     value=access_token,
                     httponly=True,
-                    secure=True
+                    secure=True,
+                    samesite='Lax'
                 )
-                response
                 # Вернуть HTTP-ответ с кукой в заголовках
                 return response
             
