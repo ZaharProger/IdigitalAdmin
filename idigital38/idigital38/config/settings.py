@@ -43,7 +43,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_extensions',
     'corsheaders',
-    'idigital38'
+    'idigital38.events',
+    'idigital38.organizers',
+    'idigital38.authorization',
+    'idigital38.forum_programme'
 ]
 
 MIDDLEWARE = [
