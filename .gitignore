@@ -5,3 +5,4 @@ idigital38/idigital38/static/*
 idigital38/idigital38/media/*
 *.pem
 __pycache__
+idigital38/idigital38/forum_programme/test.py
