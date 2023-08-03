@@ -14,7 +14,7 @@ class ProgrammeDay(Model):
 class DayTimetable(Model):
     name = CharField(default='', max_length=100)
     time_start = BigIntegerField(default=0)
-    time_end = BigIntegerField(default=0)
+    time_end = BigIntegerField(default=0, null=True, blank=True)
     moderators = CharField(default='', max_length=500, null=True, blank=True)
     speakers = CharField(default='', max_length=500, null=True, blank=True)
     day = ForeignKey(to=ProgrammeDay, on_delete=CASCADE, null=True, blank=True, related_name='timetable_day')
