@@ -20,6 +20,7 @@ from django.urls import path
 
 from .settings import DEBUG, STATIC_ROOT, STATIC_URL, MEDIA_URL, MEDIA_ROOT
 from ..events.views import EventView
+from ..forum_programme.views import ProgrammeDayView
 from ..organizers.views import OrganizerView
 from ..authorization.views import LoginView, LogoutView
 
@@ -29,6 +30,7 @@ urlpatterns = [
     path('api/organizers/', OrganizerView.as_view(), name='organizers'),
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
+    path('api/forum-programme/', ProgrammeDayView.as_view(), name='programme_days')
 ]
 
 if DEBUG:
