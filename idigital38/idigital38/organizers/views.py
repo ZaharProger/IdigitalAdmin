@@ -11,8 +11,8 @@ from .serializers import OrganizerSerializer
 
 
 class OrganizerView(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
+    permission_classes = []
+    authentication_classes = []
 
     def get(self, request):
         organizer_id = request.GET.get('id', None)
@@ -52,7 +52,7 @@ class OrganizerView(APIView):
         new_organizer = OrganizerForm(request.data, request.FILES)
         if new_organizer.is_valid():
             max_order = Organizer.objects.aggregate(Max('order'))
-            new_order = 0 if max_order is None else max_order['order__max'] + 1
+            new_order = 0 if max_order['order__max'] is None else max_order['order__max'] + 1
             new_organizer.instance.order = new_order
 
             new_organizer.save()

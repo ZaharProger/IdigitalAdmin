@@ -10,8 +10,8 @@ from .serializers import EventSerializer
 
 
 class EventView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = []
+    permission_classes = []
 
     def get(self, request):
         event_id = request.GET.get('id', None)

@@ -8,8 +8,7 @@ from django.db.transaction import atomic
 
 from .models import ProgrammeDay, DayTimetable, DayBlock, Report
 from .forms import DayBlockForm, ProgrammeDayForm, ReportForm, DayTimetableForm
-from .serializers import ProgrammeDaySerializer, ProgrammeDayNestedSerializer, \
-    DayTimetableSerializer, DayBlockSerializer, ReportSerializer
+from .serializers import ProgrammeDaySerializer, DayTimetableSerializer, DayBlockSerializer, ReportSerializer
 
 # Это я тесты проводил для POST хэндлера, можно закомментить, в гит я не закидывал тестовый файл
 from .test import request_data
@@ -23,20 +22,17 @@ class ProgrammeDayView(APIView):
         day_id = request.GET.get('id', None)
         if day_id is None:
             days_data = ProgrammeDay.objects.all()
-            serialized_data = ProgrammeDaySerializer(days_data, many=True).data
         else:
             try:
                 days_data = [ProgrammeDay.objects.get(pk=day_id)]
             except (ProgrammeDay.DoesNotExist, ValueError):
                 days_data = []
 
-            serialized_data = ProgrammeDayNestedSerializer(days_data, many=True).data
-
         is_not_found = len(days_data) == 0
 
         return Response(
             {
-                'data': serialized_data,
+                'data': ProgrammeDaySerializer(days_data, many=True).data,
                 'message': 'Не найдено ни одного дня в рамках программы форума' if is_not_found else ''
             },
             status=status.HTTP_200_OK if not is_not_found else status.HTTP_404_NOT_FOUND,
@@ -140,7 +136,7 @@ class ProgrammeDayView(APIView):
         try:
             day_id = int(day_form_data['id'])
             found_day = ProgrammeDay.objects.get(pk=day_id)
-            serialized_day = ProgrammeDayNestedSerializer(found_day, data=day_form_data, partial=True)
+            serialized_day = ProgrammeDaySerializer(found_day, data=day_form_data, partial=True)
 
             with atomic():
                 if serialized_day.is_valid():
