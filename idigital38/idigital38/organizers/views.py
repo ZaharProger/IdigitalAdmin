@@ -14,8 +14,6 @@ class OrganizerView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
-    organizer_serializer: OrganizerSerializer = None
-
     def get(self, request):
         organizer_id = request.GET.get('id', None)
         if organizer_id is None:

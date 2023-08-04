@@ -23,10 +23,16 @@ class DayBlockSerializer(ModelSerializer):
         fields = ['id', 'name', 'place', 'moderators', 'day', 'reports']
 
 
-class ProgrammeDaySerializer(ModelSerializer):
+class ProgrammeDayNestedSerializer(ModelSerializer):
     day_timetable = DayTimetableSerializer(many=True, source='timetable_day')
     day_blocks = DayBlockSerializer(many=True, source='block_day')
 
     class Meta:
         model = ProgrammeDay
         fields = ['id', 'name', 'place', 'day_timetable', 'day_blocks']
+
+
+class ProgrammeDaySerializer(ModelSerializer):
+    class Meta:
+        model = ProgrammeDay
+        fields = ['id', 'name', 'place']
