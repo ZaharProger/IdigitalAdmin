@@ -13,7 +13,6 @@ from .serializers import ProgrammeDaySerializer, DayTimetableSerializer, DayBloc
 # Это я тесты проводил для POST хэндлера, можно закомментить, в гит я не закидывал тестовый файл
 from .test import request_data
 
-
 class ProgrammeDayView(APIView):
     permission_classes = []
     authentication_classes = []
@@ -42,7 +41,6 @@ class ProgrammeDayView(APIView):
     def delete(self, request):
         ids = [item_id.strip() for item_id in request.GET.get('ids', '0').split(',')]
         is_valid = all(item_id.isnumeric() for item_id in ids)
-
         if is_valid:
             ProgrammeDay.objects.filter(id__in=ids).delete()
 
@@ -138,9 +136,24 @@ class ProgrammeDayView(APIView):
             found_day = ProgrammeDay.objects.get(pk=day_id)
             serialized_day = ProgrammeDaySerializer(found_day, data=day_form_data, partial=True)
 
+            removed_timetable_ids = [item_id.strip() for item_id in request.data.get('removed_timetable', '').split(',')]
+            removed_blocks_ids = [item_id.strip() for item_id in request.data.get('removed_blocks', '').split(',')]
+            removed_reports_ids = [item_id.strip() for item_id in request.data.get('removed_reports', '').split(',')]
+
+            is_valid = (
+                all(item_id.isnumeric() for item_id in removed_timetable_ids) and
+                all(item_id.isnumeric() for item_id in removed_blocks_ids) and
+                all(item_id.isnumeric() for item_id in removed_reports_ids)
+            )
+
             with atomic():
                 if serialized_day.is_valid():
                     serialized_day.save()
+
+                if is_valid:
+                    DayTimetable.objects.filter(id__in=removed_timetable_ids).delete()
+                    DayBlock.objects.filter(id__in=removed_blocks_ids).delete()
+                    Report.objects.filter(id__in=removed_reports_ids).delete()
 
                 self.update_nested_data(
                     data=[item for item in timetable_form_data if 'id' in item.keys()],
@@ -192,7 +205,6 @@ class ProgrammeDayView(APIView):
                         callback=lambda form: ReportForm(form)
                     )
 
-            message = ''
             response_status = status.HTTP_200_OK
 
         except (ProgrammeDay.DoesNotExist, ValueError, TypeError):
