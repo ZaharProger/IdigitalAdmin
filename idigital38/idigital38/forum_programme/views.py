@@ -10,8 +10,6 @@ from .models import ProgrammeDay, DayTimetable, DayBlock, Report
 from .forms import DayBlockForm, ProgrammeDayForm, ReportForm, DayTimetableForm
 from .serializers import ProgrammeDaySerializer, DayTimetableSerializer, DayBlockSerializer, ReportSerializer
 
-# Это я тесты проводил для POST хэндлера, можно закомментить, в гит я не закидывал тестовый файл
-from .test import request_data
 
 class ProgrammeDayView(APIView):
     permission_classes = []
@@ -71,11 +69,11 @@ class ProgrammeDayView(APIView):
 
     def post(self, request):
         day_form_data = {
-            'name': request_data['name'] if 'name' in request_data.keys() else None,
-            'place': request_data['place'] if 'place' in request_data.keys() else None
+            'name': request.data['name'] if 'name' in request.data.keys() else None,
+            'place': request.data['place'] if 'place' in request.data.keys() else None
         }
-        timetable_form_data = request_data['day_timetable'] if 'day_timetable' in request_data.keys() else []
-        blocks_form_data = request_data['day_blocks'] if 'day_blocks' in request_data.keys() else []
+        timetable_form_data = request.data['day_timetable'] if 'day_timetable' in request.data.keys() else []
+        blocks_form_data = request.data['day_blocks'] if 'day_blocks' in request.data.keys() else []
 
         day_form = ProgrammeDayForm(day_form_data)
         all_correct = False
@@ -124,36 +122,27 @@ class ProgrammeDayView(APIView):
 
     def put(self, request):
         day_form_data = {
-            'id': request_data['id'] if 'id' in request_data.keys() else None,
-            'name': request_data['name'] if 'name' in request_data.keys() else None,
-            'place': request_data['place'] if 'place' in request_data.keys() else None
+            'id': request.data['id'] if 'id' in request.data.keys() else None,
+            'name': request.data['name'] if 'name' in request.data.keys() else None,
+            'place': request.data['place'] if 'place' in request.data.keys() else None
         }
-        timetable_form_data = request_data['day_timetable'] if 'day_timetable' in request_data.keys() else []
-        blocks_form_data = request_data['day_blocks'] if 'day_blocks' in request_data.keys() else []
+        timetable_form_data = request.data['day_timetable'] if 'day_timetable' in request.data.keys() else []
+        blocks_form_data = request.data['day_blocks'] if 'day_blocks' in request.data.keys() else []
 
         try:
             day_id = int(day_form_data['id'])
             found_day = ProgrammeDay.objects.get(pk=day_id)
             serialized_day = ProgrammeDaySerializer(found_day, data=day_form_data, partial=True)
 
-            removed_timetable_ids = [item_id.strip() for item_id in request.data.get('removed_timetable', '').split(',')]
-            removed_blocks_ids = [item_id.strip() for item_id in request.data.get('removed_blocks', '').split(',')]
-            removed_reports_ids = [item_id.strip() for item_id in request.data.get('removed_reports', '').split(',')]
-
-            is_valid = (
-                all(item_id.isnumeric() for item_id in removed_timetable_ids) and
-                all(item_id.isnumeric() for item_id in removed_blocks_ids) and
-                all(item_id.isnumeric() for item_id in removed_reports_ids)
-            )
-
             with atomic():
                 if serialized_day.is_valid():
                     serialized_day.save()
 
-                if is_valid:
-                    DayTimetable.objects.filter(id__in=removed_timetable_ids).delete()
-                    DayBlock.objects.filter(id__in=removed_blocks_ids).delete()
-                    Report.objects.filter(id__in=removed_reports_ids).delete()
+                if 'removed_timetable' in request.data.keys() and 'removed_blocks' in request.data.keys()\
+                        and 'removed_reports' in request.data.keys():
+                    DayTimetable.objects.filter(id__in=request.data['removed_timetable']).delete()
+                    DayBlock.objects.filter(id__in=request.data['removed_blocks']).delete()
+                    Report.objects.filter(id__in=request.data['removed_reports']).delete()
 
                 self.update_nested_data(
                     data=[item for item in timetable_form_data if 'id' in item.keys()],
@@ -206,6 +195,7 @@ class ProgrammeDayView(APIView):
                     )
 
             response_status = status.HTTP_200_OK
+            message = ''
 
         except (ProgrammeDay.DoesNotExist, ValueError, TypeError):
             message = 'Не найден день программы форума по заданному идентификатору'
