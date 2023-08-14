@@ -24,4 +24,4 @@ class DayBlockForm(ModelForm):
 class ReportForm(ModelForm):
     class Meta:
         model = Report
-        fields = ['name', 'time_start', 'speakers', 'block']
+        fields = ['name', 'time_start', 'time_end', 'speakers', 'block']

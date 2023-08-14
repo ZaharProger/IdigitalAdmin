@@ -36,8 +36,9 @@ class DayBlock(Model):
 
 
 class Report(Model):
-    name = CharField(default='', max_length=100)
+    name = CharField(default='', max_length=150)
     time_start = BigIntegerField(default=0)
+    time_end = BigIntegerField(default=0)
     speakers = CharField(default='', max_length=500, null=True, blank=True)
     block = ForeignKey(to=DayBlock, on_delete=CASCADE, null=True, blank=True, related_name='report_block')
 
