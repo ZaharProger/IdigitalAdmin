@@ -14,7 +14,6 @@ from pathlib import Path
 
 import dotenv
 
-
 dotenv.load_dotenv(dotenv.find_dotenv())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -142,9 +141,9 @@ REST_FRAMEWORK = {
     ]
 }
 
-#simplejwt конфиг для передачи токена в заголовке запроса
+# simplejwt конфиг для передачи токена в заголовке запроса
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
+    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 STATIC_URL = 'static/'
@@ -154,12 +153,12 @@ else:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static"),
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
-  'http://localhost:3000',
+    'http://localhost:3000',
 )
 
 MEDIA_URL = '/media/'

@@ -12,8 +12,11 @@ from .serializers import ProgrammeDaySerializer, DayTimetableSerializer, DayBloc
 
 
 class ProgrammeDayView(APIView):
-    permission_classes = []
-    authentication_classes = []
+    authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        method = self.request.method
+        return [] if method == 'GET' else [IsAuthenticated()]
 
     def get(self, request):
         day_id = request.GET.get('id', None)

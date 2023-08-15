@@ -10,8 +10,11 @@ from .serializers import EventSerializer
 
 
 class EventView(APIView):
-    authentication_classes = []
-    permission_classes = []
+    authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        method = self.request.method
+        return [] if method == 'GET' else [IsAuthenticated()]
 
     def get(self, request):
         event_id = request.GET.get('id', None)

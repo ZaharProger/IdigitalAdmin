@@ -11,8 +11,11 @@ from .serializers import OrganizerSerializer
 
 
 class OrganizerView(APIView):
-    permission_classes = []
-    authentication_classes = []
+    authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        method = self.request.method
+        return [] if method == 'GET' else [IsAuthenticated()]
 
     def get(self, request):
         organizer_id = request.GET.get('id', None)

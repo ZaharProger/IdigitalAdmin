@@ -1,9 +1,11 @@
+import datetime
+
+from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework import status
-from django.http import HttpResponse
 
 
 class LoginView(APIView):
@@ -21,23 +23,28 @@ class LoginView(APIView):
             if user is not None:
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
-                response = HttpResponse('Успешный вход!',status=200)
+                response = Response({'message': 'Успешный вход!'}, status=status.HTTP_200_OK)
                 # Установка токена в куки с флагом httponly=True
                 response.set_cookie(
                     key='access_token',
                     value=access_token,
                     httponly=True,
                     secure=True,
-                    samesite='Lax'
+                    samesite='None',
+                    expires=datetime.datetime.utcnow() + datetime.timedelta(days=30)
                 )
                 # Вернуть HTTP-ответ с кукой в заголовках
                 return response
             
         return Response({'message': 'Неверный логин или пароль!'}, status=status.HTTP_401_UNAUTHORIZED)
 
+    def get(self, request):
+        username = request.user.username if type(request.user) != AnonymousUser else None
+        return Response({'username': 'username'}, status=status.HTTP_200_OK)
+
 class LogoutView(APIView):
     def get(self, request):
         # Удаление токена из кук
-        response = HttpResponse('Вы вышли из системы.', status=200)
+        response = Response({'message': 'Вы вышли из системы!'}, status=status.HTTP_200_OK)
         response.delete_cookie('access_token')
         return response
