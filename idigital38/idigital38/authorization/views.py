@@ -30,8 +30,7 @@ class LoginView(APIView):
                     value=access_token,
                     httponly=True,
                     secure=True,
-                    samesite='None',
-                    expires=datetime.datetime.utcnow() + datetime.timedelta(days=30)
+                    samesite='None'
                 )
                 # Вернуть HTTP-ответ с кукой в заголовках
                 return response
@@ -40,7 +39,7 @@ class LoginView(APIView):
 
     def get(self, request):
         username = request.user.username if type(request.user) != AnonymousUser else None
-        return Response({'username': 'username'}, status=status.HTTP_200_OK)
+        return Response({'username': username}, status=status.HTTP_200_OK)
 
 class LogoutView(APIView):
     def get(self, request):
