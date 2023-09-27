@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'idigital38.events',
     'idigital38.organizers',
     'idigital38.authorization',
-    'idigital38.forum_programme'
+    'idigital38.forum_programme',
+    'idigital38.appointments'
 ]
 
 MIDDLEWARE = [
