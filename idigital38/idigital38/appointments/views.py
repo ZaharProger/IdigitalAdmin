@@ -1,6 +1,7 @@
 import base64
 
 import openpyxl
+from django.http import HttpResponse
 from openpyxl.styles import Font
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -41,13 +42,19 @@ class AppointmentView(APIView):
 
         workbook.remove(workbook['Sheet'])
         workbook.save('export-data/Idigital38_Reports.xlsx')
-        file = open('export-data/Idigital38_Reports.xlsx', 'rb').read()
+        workbook.close()
 
-        return Response(
-            {'message': '', 'file': base64.b64encode(file), 'name': 'Idigital38_Заявки.xlsx'},
+        with open('export-data/Idigital38_Reports.xlsx', 'rb') as file:
+            data = file.read()
+
+        response = HttpResponse(
+            data,
             status=status.HTTP_200_OK,
-            content_type='application/json'
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
+        response['Content-Disposition'] = "attachment; filename='Idigital38_Заявки.xlsx'"
+
+        return response
 
     def post(self, request):
         new_appointment = AppointmentForm(request.data)
