@@ -1,3 +1,5 @@
+from wsgiref.util import FileWrapper
+
 import openpyxl
 from openpyxl.styles import Font
 from rest_framework import status
@@ -42,7 +44,7 @@ class AppointmentView(APIView):
         file = open('export-data/Idigital38_Reports.xlsx', 'rb')
 
         return Response(
-            {'message': '', 'file': file, 'name': 'Idigital38_Заявки.xlsx'},
+            {'message': '', 'file': FileWrapper(file), 'name': 'Idigital38_Заявки.xlsx'},
             status=status.HTTP_200_OK,
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
