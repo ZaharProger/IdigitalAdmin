@@ -28,7 +28,7 @@ class AppointmentView(APIView):
 
         appointments_sheet.column_dimensions['B'].width = 50
         appointments_sheet.column_dimensions['C'].width = 35
-        appointments_sheet.column_dimensions['D'].width = 50
+        appointments_sheet.column_dimensions['D'].width = 35
 
         header_font = Font(color='00000000', bold=True)
         header_alignment = Alignment(horizontal='center', vertical='center')
