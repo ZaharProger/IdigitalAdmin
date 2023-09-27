@@ -12,10 +12,7 @@ from .models import Appointment
 
 class AppointmentView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-
-    def get_permissions(self):
-        method = self.request.method
-        return [] if method == 'GET' else [IsAuthenticated()]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         workbook = openpyxl.Workbook()
