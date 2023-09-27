@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from .forms import EventForm
@@ -9,7 +10,7 @@ from .serializers import EventSerializer
 
 
 class EventView(APIView):
-    authentication_classes = []
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def get_permissions(self):
         method = self.request.method
