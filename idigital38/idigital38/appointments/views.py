@@ -41,13 +41,12 @@ class AppointmentView(APIView):
             appointments_sheet.cell(row=row_number, column=4).value = appointments[i][2]
 
         workbook.remove(workbook['Sheet'])
-        workbook.save('export-data/Idigital38_Reports.xlsx')
-        file = open('export-data/Idigital38_Reports.xlsx', 'rb')
+        workbook.save('idigital38/media/Idigital38_Reports.xlsx')
 
         return HttpResponse(
-            {'message': '', 'file': FileWrapper(file), 'name': 'Idigital38_Заявки.xlsx'},
+            {'message': '', 'file': 'idigital38/media/Idigital38_Reports.xlsx', 'name': 'Idigital38_Заявки.xlsx'},
             status=status.HTTP_200_OK,
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            content_type='application/json'
         )
 
     def post(self, request):
