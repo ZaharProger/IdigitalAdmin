@@ -1,6 +1,7 @@
 from wsgiref.util import FileWrapper
 
 import openpyxl
+from django.http import HttpResponse
 from openpyxl.styles import Font
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -43,7 +44,7 @@ class AppointmentView(APIView):
         workbook.save('export-data/Idigital38_Reports.xlsx')
         file = open('export-data/Idigital38_Reports.xlsx', 'rb')
 
-        return Response(
+        return HttpResponse(
             {'message': '', 'file': FileWrapper(file), 'name': 'Idigital38_Заявки.xlsx'},
             status=status.HTTP_200_OK,
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
