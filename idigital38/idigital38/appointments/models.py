@@ -3,9 +3,9 @@ from django.db.models import Model, CharField, TextChoices
 
 class Appointment(Model):
     class OrganizationTypes(TextChoices):
-        SCHOOL = 'Школа (Я ученик)'
-        UNIVERSITY = 'Университет (Я студент)'
-        COMPANY = 'Предприятие (Я сотрудник компании)'
+        SCHOOL = 'Школа (ученик)'
+        UNIVERSITY = 'Университет (студент)'
+        COMPANY = 'Предприятие (сотрудник компании)'
 
     name = CharField(default='', max_length=100)
     contacts = CharField(default='', max_length=100)
