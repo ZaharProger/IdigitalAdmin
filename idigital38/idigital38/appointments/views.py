@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from .forms import AppointmentForm
 
 
-class EventView(APIView):
+class AppointmentView(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def get_permissions(self):
