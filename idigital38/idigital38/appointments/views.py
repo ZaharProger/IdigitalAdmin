@@ -1,8 +1,6 @@
-import base64
-
 import openpyxl
 from django.http import HttpResponse
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Alignment
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -28,9 +26,15 @@ class AppointmentView(APIView):
         appointments_sheet['C1'] = 'Контакты'
         appointments_sheet['D1'] = 'Организация'
 
+        appointments_sheet.column_dimensions['B'].width = 100
+        appointments_sheet.column_dimensions['C'].width = 50
+        appointments_sheet.column_dimensions['D'].width = 100
+
         header_font = Font(color='00000000', bold=True)
+        header_alignment = Alignment(horizontal='center', vertical='center')
         for cell in appointments_sheet['1:1']:
             cell.font = header_font
+            cell.alignment = header_alignment
 
         appointments = Appointment.objects.all().values_list('name', 'contacts', 'organization', named=True)
         for i in range(len(appointments)):
@@ -52,7 +56,7 @@ class AppointmentView(APIView):
             status=status.HTTP_200_OK,
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-        response['Content-Disposition'] = "attachment; filename='Idigital38_Заявки.xlsx'"
+        response['Content-Disposition'] = 'attachment; filename="Idigital38_Reports.xlsx"'
 
         return response
 
