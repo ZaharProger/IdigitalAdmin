@@ -11,7 +11,7 @@ from .models import Appointment
 
 @api_view(['GET', 'POST'])
 def appointment_view(request):
-    if request.method == 'GET':
+    if request.method == 'GET' and request.user.is_authenticated:
         workbook = openpyxl.Workbook()
 
         workbook.create_sheet('Заявки')
@@ -55,9 +55,7 @@ def appointment_view(request):
         response['Content-Disposition'] = 'attachment; filename="Idigital38_Reports.xlsx"'
     else:
         new_appointment = AppointmentForm(request.data)
-        if not request.user.is_authenticated:
-            response_status = status.HTTP_403_FORBIDDEN
-        elif new_appointment.is_valid():
+        if new_appointment.is_valid():
             new_appointment.save()
             response_status = status.HTTP_200_OK
         else:
