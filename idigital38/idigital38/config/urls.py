@@ -20,7 +20,7 @@ from django.urls import path
 
 from django.conf import settings
 
-from ..appointments.views import AppointmentView
+from ..appointments.views import appointment_view
 from ..events.views import EventView
 from ..forum_programme.views import ProgrammeDayView
 from ..organizers.views import OrganizerView
@@ -33,7 +33,7 @@ urlpatterns = [
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
     path('api/forum-programme/', ProgrammeDayView.as_view(), name='programme_days'),
-    path('api/appointments/', AppointmentView.as_view(), name='appointments')
+    path('api/appointments/', appointment_view, name='appointments')
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

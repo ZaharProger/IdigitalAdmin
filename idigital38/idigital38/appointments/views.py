@@ -2,20 +2,16 @@ import openpyxl
 from django.http import HttpResponse
 from openpyxl.styles import Font, Alignment
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 
 from .forms import AppointmentForm
 from .models import Appointment
 
 
-class AppointmentView(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
+@api_view(['GET', 'POST'])
+def appointment_view(request):
+    if request.method == 'GET':
         workbook = openpyxl.Workbook()
 
         workbook.create_sheet('Заявки')
@@ -57,19 +53,20 @@ class AppointmentView(APIView):
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         response['Content-Disposition'] = 'attachment; filename="Idigital38_Reports.xlsx"'
-
-        return response
-
-    def post(self, request):
+    else:
         new_appointment = AppointmentForm(request.data)
-        if new_appointment.is_valid():
+        if not request.user.is_authenticated:
+            response_status = status.HTTP_403_FORBIDDEN
+        elif new_appointment.is_valid():
             new_appointment.save()
             response_status = status.HTTP_200_OK
         else:
             response_status = status.HTTP_400_BAD_REQUEST
 
-        return Response(
+        response = Response(
             {'message': ''},
             status=response_status,
             content_type='application/json'
         )
+
+    return response
