@@ -19,12 +19,20 @@ def appointment_view(request):
 
         appointments_sheet['A1'] = '№'
         appointments_sheet['B1'] = 'ФИО'
-        appointments_sheet['C1'] = 'Контакты'
+        appointments_sheet['C1'] = 'Должность'
         appointments_sheet['D1'] = 'Организация'
+        appointments_sheet['E1'] = 'E-mail'
+        appointments_sheet['F1'] = 'Номер телефона'
+        appointments_sheet['G1'] = 'Формат участия'
+        appointments_sheet['H1'] = 'Секции'
 
         appointments_sheet.column_dimensions['B'].width = 50
         appointments_sheet.column_dimensions['C'].width = 35
         appointments_sheet.column_dimensions['D'].width = 35
+        appointments_sheet.column_dimensions['E'].width = 35
+        appointments_sheet.column_dimensions['F'].width = 35
+        appointments_sheet.column_dimensions['G'].width = 35
+        appointments_sheet.column_dimensions['H'].width = 120
 
         header_font = Font(color='00000000', bold=True)
         header_alignment = Alignment(horizontal='center', vertical='center')
@@ -32,13 +40,17 @@ def appointment_view(request):
             cell.font = header_font
             cell.alignment = header_alignment
 
-        appointments = Appointment.objects.all().values_list('name', 'contacts', 'organization', named=True)
+        appointments = Appointment.objects.all()
         for i in range(len(appointments)):
             row_number = i + 2
             appointments_sheet.cell(row=row_number, column=1).value = i + 1
-            appointments_sheet.cell(row=row_number, column=2).value = appointments[i][0]
-            appointments_sheet.cell(row=row_number, column=3).value = appointments[i][1]
-            appointments_sheet.cell(row=row_number, column=4).value = appointments[i][2]
+            appointments_sheet.cell(row=row_number, column=2).value = appointments[i].name
+            appointments_sheet.cell(row=row_number, column=3).value = appointments[i].status
+            appointments_sheet.cell(row=row_number, column=4).value = appointments[i].organization
+            appointments_sheet.cell(row=row_number, column=5).value = appointments[i].email
+            appointments_sheet.cell(row=row_number, column=6).value = appointments[i].phone
+            appointments_sheet.cell(row=row_number, column=7).value = appointments[i].participation_type
+            appointments_sheet.cell(row=row_number, column=8).value = appointments[i].sections
 
         workbook.remove(workbook['Sheet'])
         workbook.save('export-data/Idigital38_Reports.xlsx')
