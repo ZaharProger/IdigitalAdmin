@@ -26,7 +26,7 @@ class Appointment(Model):
         max_length=50,
         choices=ParticipationTypes.choices
     )
-    sections = CharField(default='', max_length=20)
+    sections = CharField(default='', max_length=500)
 
     class Meta:
         verbose_name = 'appointment'
