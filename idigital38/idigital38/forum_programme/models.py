@@ -27,6 +27,7 @@ class DayTimetable(Model):
 class DayBlock(Model):
     name = CharField(default='', max_length=150)
     place = CharField(default='', max_length=150, null=True, blank=True)
+    target_audience = CharField(default='', max_length=100, null=True, blank=True)
     moderators = CharField(default='', max_length=500, null=True, blank=True)
     day = ForeignKey(to=ProgrammeDay, on_delete=CASCADE, null=True, blank=True, related_name='block_day')
 

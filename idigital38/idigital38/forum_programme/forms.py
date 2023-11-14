@@ -18,7 +18,7 @@ class DayTimetableForm(ModelForm):
 class DayBlockForm(ModelForm):
     class Meta:
         model = DayBlock
-        fields = ['name', 'place', 'moderators', 'day']
+        fields = ['name', 'place', 'target_audience', 'moderators', 'day']
 
 
 class ReportForm(ModelForm):

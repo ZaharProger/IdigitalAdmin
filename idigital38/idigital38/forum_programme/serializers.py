@@ -20,7 +20,7 @@ class DayBlockSerializer(ModelSerializer):
 
     class Meta:
         model = DayBlock
-        fields = ['id', 'name', 'place', 'moderators', 'day', 'reports']
+        fields = ['id', 'name', 'place', 'target_audience', 'moderators', 'day', 'reports']
 
 
 class ProgrammeDaySerializer(ModelSerializer):
