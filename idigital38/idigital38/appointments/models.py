@@ -5,7 +5,7 @@ class Appointment(Model):
 
     class OrganizationTypes(TextChoices):
         SCHOOL = 'Школа (ученик)'
-        UNIVERSITY = 'Университет (студент)'
+        UNIVERSITY = 'Университет, СПО (студент)'
         COMPANY = 'Предприятие (сотрудник компании)'
 
     class ParticipationTypes(TextChoices):
